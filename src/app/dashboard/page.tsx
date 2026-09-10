@@ -28,10 +28,17 @@ export default function Dashboard() {
     try {
       const res = await fetch("/api/transactions");
       const data = await res.json();
-      setTransactions(data.transactions);
-      setSummary(data.summary);
+      
+      if (res.ok) {
+        setTransactions(data.transactions || []);
+        setSummary(data.summary || { balance: 0, totalIncome: 0, totalExpense: 0 });
+      } else {
+        console.error("API Error:", data.error);
+        setTransactions([]);
+      }
     } catch (error) {
       console.error("Failed to fetch data:", error);
+      setTransactions([]);
     } finally {
       setLoading(false);
     }

@@ -4,15 +4,59 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id                   String        @id @default(uuid())
+  full_name            String
+  student_no           String
+  role                 Role          @default(MEMBER)
+  created_at           DateTime      @default(now())
+  
+  transactionsCreated  Transaction[] @relation("CreatedBy")
+  transactionsPaid     Transaction[] @relation("Payer")
+
+  @@map("users")
+}
+
+model Category {
+  id           String          @id @default(uuid())
+  name         String
+  type         TransactionType
+  
+  transactions Transaction[]
+
+  @@map("categories")
 }
 
 model Transaction {
-  id        String   @id @default(uuid())
-  title     String
-  amount    Float
-  type      String   // "INCOME" or "EXPENSE"
-  category  String
-  createdAt DateTime @default(now())
+  id               String          @id @default(uuid())
+  title            String
+  amount           Decimal
+  type             TransactionType
+  category_id      String
+  created_by       String
+  payer_id         String?
+  receipt_url      String?
+  note             String?
+  transaction_date DateTime        @default(now())
+  created_at       DateTime        @default(now())
+
+  category         Category        @relation(fields: [category_id], references: [id])
+  creator          User            @relation("CreatedBy", fields: [created_by], references: [id])
+  payer            User?           @relation("Payer", fields: [payer_id], references: [id])
+
+  @@map("transactions")
 }

@@ -4,17 +4,23 @@ import prisma from '@/lib/prisma';
 export async function GET() {
   try {
     const transactions = await prisma.transaction.findMany({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { transaction_date: 'desc' },
+      include: {
+        category: true,
+        payer: true,
+        creator: true,
+      }
     });
 
     const summary = transactions.reduce(
       (acc, curr) => {
+        const amount = Number(curr.amount);
         if (curr.type === 'INCOME') {
-          acc.totalIncome += curr.amount;
-          acc.balance += curr.amount;
+          acc.totalIncome += amount;
+          acc.balance += amount;
         } else {
-          acc.totalExpense += curr.amount;
-          acc.balance -= curr.amount;
+          acc.totalExpense += amount;
+          acc.balance -= amount;
         }
         return acc;
       },
@@ -31,9 +37,9 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { title, amount, type, category } = body;
+    const { title, amount, type, category_id, created_by, payer_id, note, receipt_url } = body;
 
-    if (!title || !amount || !type || !category) {
+    if (!title || !amount || !type || !category_id || !created_by) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -42,8 +48,16 @@ export async function POST(request: Request) {
         title,
         amount: parseFloat(amount),
         type,
-        category,
+        category_id,
+        created_by,
+        payer_id: payer_id || null,
+        note: note || null,
+        receipt_url: receipt_url || null,
       },
+      include: {
+        category: true,
+        payer: true,
+      }
     });
 
     return NextResponse.json(transaction, { status: 201 });

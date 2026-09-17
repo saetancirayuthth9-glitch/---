@@ -3,63 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 255 25% 97%; /* #F6F5FA soft tinted background */
-    --foreground: 260 15% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 260 15% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 260 15% 15%;
-    --primary: 263 70% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 260 40% 95%;
-    --secondary-foreground: 260 15% 15%;
-    --muted: 260 20% 93%;
-    --muted-foreground: 260 10% 45%;
-    --accent: 263 50% 94%;
-    --accent-foreground: 263 70% 40%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 260 25% 88%;
-    --input: 260 25% 88%;
-    --ring: 263 70% 50%;
-    --radius: 1rem;
-  }
-}
-
-@layer base {
   body {
     background-color: #F4F3F8;
     color: #1E1B2E;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
   }
-}
-
-/* Crisp Clean Card styling */
-.clean-card {
-  background-color: #FFFFFF;
-  border: 1.5px solid #E2DDF0;
-  border-radius: 1.25rem;
-  box-shadow: 0 4px 20px -2px rgba(124, 58, 237, 0.06);
-}
-
-.clean-card-header {
-  background-color: #FAF9FD;
-  border-bottom: 1.5px solid #EAE6F4;
-  padding: 1rem 1.5rem;
-  border-top-left-radius: 1.25rem;
-  border-top-right-radius: 1.25rem;
-}
-
-.clean-input {
-  background-color: #FFFFFF;
-  border: 1.5px solid #DCD6EE;
-  border-radius: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.clean-input:focus {
-  outline: none;
-  border-color: #7C3AED;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }

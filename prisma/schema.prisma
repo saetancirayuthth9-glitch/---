@@ -8,21 +8,13 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-enum Role {
-  ADMIN
-  MEMBER
-}
-
-enum TransactionType {
-  INCOME
-  EXPENSE
-}
-
 model User {
   id                   String        @id @default(uuid())
   full_name            String
-  student_no           String
-  role                 Role          @default(MEMBER)
+  student_no           String?
+  username             String?       @unique
+  password             String?
+  role                 String        @default("MEMBER") // "ADMIN" (อาจารย์ที่ปรึกษา), "TREASURER" (เหรัญญิก), "MEMBER" (นักเรียน)
   created_at           DateTime      @default(now())
   
   transactionsCreated  Transaction[] @relation("CreatedBy")
@@ -34,7 +26,7 @@ model User {
 model Category {
   id           String          @id @default(uuid())
   name         String
-  type         TransactionType
+  type         String          @default("EXPENSE") // "INCOME" or "EXPENSE"
   
   transactions Transaction[]
 
@@ -45,7 +37,7 @@ model Transaction {
   id               String          @id @default(uuid())
   title            String
   amount           Decimal
-  type             TransactionType
+  type             String          // "INCOME" or "EXPENSE"
   category_id      String
   created_by       String
   payer_id         String?

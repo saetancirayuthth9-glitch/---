@@ -8,13 +8,13 @@ import {
   Eye,
   Lock,
   UserCheck,
-  Sparkles,
   ArrowRight,
   GraduationCap,
   Briefcase,
   AlertCircle,
   CheckCircle2,
-  Wallet
+  Wallet,
+  Sparkles
 } from "lucide-react";
 
 type RoleStatus = {
@@ -36,13 +36,11 @@ export default function AuthPortalPage() {
     treasurerName: null,
   });
 
-  // Login form state
   const [loginUsername, setLoginUsername] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  // Register form state
   const [regFullName, setRegFullName] = useState("");
   const [regUsername, setRegUsername] = useState("");
   const [regPassword, setRegPassword] = useState("");
@@ -51,14 +49,12 @@ export default function AuthPortalPage() {
   const [regError, setRegError] = useState("");
   const [regSuccess, setRegSuccess] = useState("");
 
-  // Fetch role quota status
   const fetchStatus = async () => {
     try {
       const res = await fetch("/api/auth/status");
       if (res.ok) {
         const data = await res.json();
         setRoleStatus(data);
-        // Default role selection based on what's available
         if (data.hasAdmin && !data.hasTreasurer) {
           setRegRole("TREASURER");
         } else if (!data.hasAdmin) {
@@ -141,98 +137,118 @@ export default function AuthPortalPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex flex-col justify-center py-6 sm:py-10">
-      {/* Top Banner / Logo */}
-      <div className="text-center mb-8 sm:mb-10 space-y-3">
-        <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-200 mb-2">
-          <Wallet className="w-8 h-8" />
-        </div>
-        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 tracking-tight">
-          ระบบจัดการเงินห้องเรียน
-        </h1>
-        <p className="text-sm sm:text-base text-gray-500 max-w-xl mx-auto">
-          โปร่งใส ตรวจสอบง่าย นักเรียนทุกคนเข้าดูยอดเงินคงเหลือและประวัติได้ทันที
-        </p>
+    <div className="space-y-8 sm:space-y-10">
+      {/* Top Banner with Frame */}
+      <div className="bg-white rounded-3xl border-2 border-[#DCD6EE] p-6 sm:p-8 shadow-sm text-center relative overflow-hidden">
+        <div className="absolute -right-10 -top-10 w-40 h-40 bg-violet-100/50 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-purple-100/50 rounded-full blur-2xl pointer-events-none" />
 
-        {user && (
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-50 border border-violet-200 text-xs sm:text-sm text-violet-700 mt-2">
-            <span>เข้าสู่ระบบอยู่แล้วในฐานะ: <strong>{user.full_name}</strong> ({user.role === 'ADMIN' ? 'อาจารย์ที่ปรึกษา' : user.role === 'TREASURER' ? 'เหรัญญิก' : 'นักเรียน'})</span>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="underline font-semibold hover:text-violet-900 ml-1"
-            >
-              ไปที่แดชบอร์ด →
-            </button>
+        <div className="relative z-10 space-y-3">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-200 border-2 border-violet-400">
+            <Wallet className="w-8 h-8" />
           </div>
-        )}
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
+            ระบบจัดการเงินห้องเรียน
+          </h1>
+          <p className="text-xs sm:text-base text-gray-500 max-w-xl mx-auto font-medium">
+            โปร่งใส ตรวจสอบง่าย นักเรียนทุกคนเข้าดูยอดเงินคงเหลือและประวัติได้ทันที
+          </p>
+
+          {user && (
+            <div className="pt-2">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-violet-50 border-2 border-violet-200 text-xs sm:text-sm text-violet-800 shadow-sm">
+                <span>เข้าสู่ระบบอยู่แล้วในฐานะ: <strong>{user.full_name}</strong> ({user.role === 'ADMIN' ? 'อาจารย์ที่ปรึกษา' : user.role === 'TREASURER' ? 'เหรัญญิก' : 'นักเรียน'})</span>
+                <button
+                  onClick={() => router.push("/dashboard")}
+                  className="font-bold underline text-violet-600 hover:text-violet-900 ml-1"
+                >
+                  ไปที่แดชบอร์ด →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Main Container - 90% Width */}
-      <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+      {/* Main Grid: 2 Distinct Framed Zones */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         
-        {/* ================= ZONE 1: FOR STUDENTS (No Registration Required) ================= */}
-        <div className="lg:col-span-5 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-violet-200 flex flex-col justify-between min-h-[420px]">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold uppercase tracking-wider mb-6">
+        {/* ================= ZONE 1: FOR STUDENTS ================= */}
+        <div className="lg:col-span-5 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-violet-200 border-2 border-violet-400 flex flex-col justify-between relative overflow-hidden">
+          
+          <div className="space-y-6">
+            {/* Header Tag */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-xs font-bold uppercase tracking-wider">
               <Eye className="w-4 h-4" />
-              สำหรับนักเรียน / เพื่อนในห้อง
+              <span>โซนที่ 1: สำหรับนักเรียน / เพื่อนในห้อง</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-bold leading-tight mb-3">
-              เข้าดูเงินห้องทันที
-            </h2>
-            <p className="text-violet-100 text-sm sm:text-base leading-relaxed mb-6">
-              ไม่ต้องสมัครสมาชิก ไม่ต้องจำรหัสผ่าน สามารถเข้าไปดูยอดเงินคงเหลือ รายรับ-รายจ่าย ประวัติ และสลิปการโอนได้ตลอดเวลา
-            </p>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold leading-tight mb-2">
+                เข้าดูเงินห้องทันที
+              </h2>
+              <p className="text-violet-100 text-xs sm:text-sm leading-relaxed">
+                ไม่ต้องสมัครสมาชิก ไม่ต้องจำรหัสผ่าน สามารถเข้าไปดูยอดเงินคงเหลือ รายรับ-รายจ่าย และสลิปการโอนได้ตลอดเวลา
+              </p>
+            </div>
 
-            <div className="space-y-3 mb-8">
-              <div className="flex items-center gap-3 text-sm text-violet-100">
-                <CheckCircle2 className="w-5 h-5 text-emerald-300 flex-shrink-0" />
+            {/* Checklist Box */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20 space-y-2.5 text-xs sm:text-sm">
+              <div className="flex items-center gap-3 text-violet-50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 flex-shrink-0" />
                 <span>ตรวจสอบยอดเงินคงเหลือปัจจุบันได้ 24 ชม.</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-violet-100">
-                <CheckCircle2 className="w-5 h-5 text-emerald-300 flex-shrink-0" />
-                <span>เห็นทุกรายการที่อาจารย์หรือเหรัญญิกบันทึกแบบ Real-time</span>
+              <div className="flex items-center gap-3 text-violet-50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+                <span>เห็นข้อมูลที่อาจารย์/เหรัญญิกบันทึกแบบ Real-time</span>
               </div>
-              <div className="flex items-center gap-3 text-sm text-violet-100">
-                <CheckCircle2 className="w-5 h-5 text-emerald-300 flex-shrink-0" />
-                <span>โหมดดูข้อมูลอย่างเดียว ปลอดภัย ไม่เสี่ยงข้อมูลผิดพลาด</span>
+              <div className="flex items-center gap-3 text-violet-50">
+                <CheckCircle2 className="w-4 h-4 text-emerald-300 flex-shrink-0" />
+                <span>โหมดดูอย่างเดียว ปลอดภัย ไร้กังวล</span>
               </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={loginAsStudent}
-            className="w-full py-4 px-6 rounded-2xl bg-white text-violet-700 font-bold text-base sm:text-lg hover:bg-violet-50 transition-all shadow-lg shadow-black/10 hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-3 group"
-          >
-            <span>เข้าดูเงินห้องทันที (โหมดนักเรียน)</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          <div className="pt-8">
+            <button
+              type="button"
+              onClick={loginAsStudent}
+              className="w-full py-4 px-6 rounded-2xl bg-white text-violet-700 font-extrabold text-sm sm:text-base hover:bg-violet-50 transition-all shadow-lg hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2.5 group border-2 border-white"
+            >
+              <Sparkles className="w-5 h-5 text-amber-500" />
+              <span>เข้าดูเงินห้องทันที (สำหรับนักเรียน)</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </div>
 
-        {/* ================= ZONE 2: FOR MANAGERS (Advisor & Treasurer) ================= */}
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-violet-100 p-6 sm:p-8 shadow-sm">
+        {/* ================= ZONE 2: FOR MANAGERS ================= */}
+        <div className="lg:col-span-7 bg-white rounded-3xl border-2 border-[#DCD6EE] shadow-sm flex flex-col justify-between overflow-hidden">
           
-          <div className="flex items-center justify-between border-b border-gray-100 pb-5 mb-6">
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 uppercase tracking-wider mb-1">
-                <ShieldCheck className="w-4 h-4" />
-                สำหรับผู้ดูแล (จำกัดตำแหน่งละ 1 คน)
+          {/* Card Header with Division */}
+          <div className="bg-[#FAF9FD] border-b-2 border-[#EAE6F4] p-5 sm:p-6 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-violet-100 border border-violet-200 flex items-center justify-center text-violet-600">
+                <ShieldCheck className="w-5 h-5" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-                อาจารย์ที่ปรึกษา & เหรัญญิก
-              </h2>
+              <div>
+                <span className="text-[11px] font-bold text-violet-600 uppercase tracking-wider block">
+                  โซนที่ 2: ผู้ดูแลระบบ
+                </span>
+                <h2 className="text-base sm:text-xl font-bold text-gray-900">
+                  อาจารย์ที่ปรึกษา & เหรัญญิก
+                </h2>
+              </div>
             </div>
 
-            {/* Toggle Login / Register */}
-            <div className="flex bg-gray-100 p-1 rounded-xl">
+            {/* Toggle Switch */}
+            <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200">
               <button
                 type="button"
                 onClick={() => { setActiveTab("login"); setLoginError(""); }}
-                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                   activeTab === "login"
-                    ? "bg-white text-violet-700 shadow-sm"
+                    ? "bg-white text-violet-700 shadow-sm border border-gray-200/60"
                     : "text-gray-500 hover:text-gray-800"
                 }`}
               >
@@ -241,9 +257,9 @@ export default function AuthPortalPage() {
               <button
                 type="button"
                 onClick={() => { setActiveTab("register"); setRegError(""); setRegSuccess(""); }}
-                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+                className={`px-3 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-bold transition-all ${
                   activeTab === "register"
-                    ? "bg-white text-violet-700 shadow-sm"
+                    ? "bg-white text-violet-700 shadow-sm border border-gray-200/60"
                     : "text-gray-500 hover:text-gray-800"
                 }`}
               >
@@ -252,239 +268,241 @@ export default function AuthPortalPage() {
             </div>
           </div>
 
-          {/* Role Quota Badges */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            {/* Advisor Status */}
-            <div className={`p-3.5 rounded-2xl border text-xs sm:text-sm flex items-start gap-3 transition-colors ${
-              roleStatus.hasAdmin
-                ? "bg-gray-50 border-gray-200 text-gray-600"
-                : "bg-violet-50/60 border-violet-200 text-violet-800"
-            }`}>
-              <GraduationCap className={`w-5 h-5 flex-shrink-0 ${roleStatus.hasAdmin ? "text-gray-400" : "text-violet-600"}`} />
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold">1. อาจารย์ที่ปรึกษา (Admin)</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                    roleStatus.hasAdmin ? "bg-gray-200 text-gray-700" : "bg-emerald-100 text-emerald-700"
-                  }`}>
-                    {roleStatus.hasAdmin ? "มีแล้ว" : "ตำแหน่งว่าง"}
-                  </span>
+          {/* Content Body */}
+          <div className="p-6 sm:p-8 space-y-6 flex-1">
+            {/* Status Boxes for the 2 Roles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Advisor Status */}
+              <div className={`p-4 rounded-2xl border-2 text-xs sm:text-sm flex items-start gap-3 transition-colors ${
+                roleStatus.hasAdmin
+                  ? "bg-gray-50 border-gray-200 text-gray-600"
+                  : "bg-violet-50/70 border-violet-200 text-violet-900"
+              }`}>
+                <GraduationCap className={`w-5 h-5 flex-shrink-0 mt-0.5 ${roleStatus.hasAdmin ? "text-gray-400" : "text-violet-600"}`} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-bold truncate">1. อาจารย์ที่ปรึกษา</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                      roleStatus.hasAdmin ? "bg-gray-200 text-gray-700" : "bg-emerald-100 text-emerald-800"
+                    }`}>
+                      {roleStatus.hasAdmin ? "มีแล้ว" : "ว่าง"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-1 truncate">
+                    {roleStatus.hasAdmin ? `ผู้ลงทะเบียน: ${roleStatus.adminName}` : "จำกัด 1 ท่าน"}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {roleStatus.hasAdmin ? `ผู้ลงทะเบียน: ${roleStatus.adminName}` : "สามารถลงทะเบียนได้ (จำกัด 1 ท่าน)"}
-                </p>
+              </div>
+
+              {/* Treasurer Status */}
+              <div className={`p-4 rounded-2xl border-2 text-xs sm:text-sm flex items-start gap-3 transition-colors ${
+                roleStatus.hasTreasurer
+                  ? "bg-gray-50 border-gray-200 text-gray-600"
+                  : "bg-purple-50/70 border-purple-200 text-purple-900"
+              }`}>
+                <Briefcase className={`w-5 h-5 flex-shrink-0 mt-0.5 ${roleStatus.hasTreasurer ? "text-gray-400" : "text-purple-600"}`} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-bold truncate">2. เหรัญญิก</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                      roleStatus.hasTreasurer ? "bg-gray-200 text-gray-700" : "bg-emerald-100 text-emerald-800"
+                    }`}>
+                      {roleStatus.hasTreasurer ? "มีแล้ว" : "ว่าง"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-1 truncate">
+                    {roleStatus.hasTreasurer ? `ผู้ลงทะเบียน: ${roleStatus.treasurerName}` : "จำกัด 1 คน"}
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Treasurer Status */}
-            <div className={`p-3.5 rounded-2xl border text-xs sm:text-sm flex items-start gap-3 transition-colors ${
-              roleStatus.hasTreasurer
-                ? "bg-gray-50 border-gray-200 text-gray-600"
-                : "bg-purple-50/60 border-purple-200 text-purple-800"
-            }`}>
-              <Briefcase className={`w-5 h-5 flex-shrink-0 ${roleStatus.hasTreasurer ? "text-gray-400" : "text-purple-600"}`} />
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold">2. เหรัญญิก (Treasurer)</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                    roleStatus.hasTreasurer ? "bg-gray-200 text-gray-700" : "bg-emerald-100 text-emerald-700"
-                  }`}>
-                    {roleStatus.hasTreasurer ? "มีแล้ว" : "ตำแหน่งว่าง"}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {roleStatus.hasTreasurer ? `ผู้ลงทะเบียน: ${roleStatus.treasurerName}` : "สามารถลงทะเบียนได้ (จำกัด 1 คน)"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* ================= TAB 1: LOGIN ================= */}
-          {activeTab === "login" && (
-            <form onSubmit={handleLogin} className="space-y-4">
-              {loginError && (
-                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-sm flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>{loginError}</span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
-                  ชื่อผู้ใช้ (Username)
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={loginUsername}
-                  onChange={(e) => setLoginUsername(e.target.value)}
-                  placeholder="เช่น admin หรือ treasurer"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-500 transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
-                  รหัสผ่าน (Password)
-                </label>
-                <input
-                  type="password"
-                  required
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-500 transition-all"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loginLoading}
-                className="w-full py-3.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm transition-all shadow-md shadow-violet-200 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                {loginLoading ? "กำลังตรวจสอบ..." : (
-                  <>
-                    <Lock className="w-4 h-4" />
-                    เข้าสู่ระบบผู้ดูแล
-                  </>
+            {/* TAB: LOGIN */}
+            {activeTab === "login" && (
+              <form onSubmit={handleLogin} className="space-y-4">
+                {loginError && (
+                  <div className="p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-200 text-rose-600 text-xs sm:text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{loginError}</span>
+                  </div>
                 )}
-              </button>
-            </form>
-          )}
 
-          {/* ================= TAB 2: REGISTER ================= */}
-          {activeTab === "register" && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              {regError && (
-                <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-sm flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>{regError}</span>
-                </div>
-              )}
-
-              {regSuccess && (
-                <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                  <span>{regSuccess}</span>
-                </div>
-              )}
-
-              {/* Role Selection */}
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
-                  เลือกตำแหน่งที่ต้องการสมัคร (1 คนต่อตำแหน่ง)
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label
-                    className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
-                      regRole === "ADMIN"
-                        ? "border-violet-600 bg-violet-50/50 ring-2 ring-violet-200"
-                        : "border-gray-200 hover:bg-gray-50"
-                    } ${roleStatus.hasAdmin ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="role"
-                      value="ADMIN"
-                      disabled={roleStatus.hasAdmin}
-                      checked={regRole === "ADMIN"}
-                      onChange={() => setRegRole("ADMIN")}
-                      className="text-violet-600"
-                    />
-                    <div>
-                      <p className="text-sm font-bold text-gray-800">อาจารย์ที่ปรึกษา</p>
-                      <p className="text-xs text-gray-500">Admin ผู้คุมระบบ</p>
-                    </div>
-                  </label>
-
-                  <label
-                    className={`flex items-center gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
-                      regRole === "TREASURER"
-                        ? "border-violet-600 bg-violet-50/50 ring-2 ring-violet-200"
-                        : "border-gray-200 hover:bg-gray-50"
-                    } ${roleStatus.hasTreasurer ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="role"
-                      value="TREASURER"
-                      disabled={roleStatus.hasTreasurer}
-                      checked={regRole === "TREASURER"}
-                      onChange={() => setRegRole("TREASURER")}
-                      className="text-violet-600"
-                    />
-                    <div>
-                      <p className="text-sm font-bold text-gray-800">เหรัญญิก</p>
-                      <p className="text-xs text-gray-500">ผู้บันทึก/จัดการเงินห้อง</p>
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
-                  ชื่อ-นามสกุล จริง
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={regFullName}
-                  onChange={(e) => setRegFullName(e.target.value)}
-                  placeholder="เช่น อ.กฤษฎา หรือ ด.ช.วิชัย การเงินดี"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-500 transition-all"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
                     ชื่อผู้ใช้ (Username)
                   </label>
                   <input
                     type="text"
                     required
-                    value={regUsername}
-                    onChange={(e) => setRegUsername(e.target.value)}
-                    placeholder="ภาษาอังกฤษหรือตัวเลข"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-500 transition-all"
+                    value={loginUsername}
+                    onChange={(e) => setLoginUsername(e.target.value)}
+                    placeholder="เช่น admin หรือ treasurer"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-[#DCD6EE] focus:border-violet-600 text-sm focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all bg-white font-medium"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5">
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
                     รหัสผ่าน (Password)
                   </label>
                   <input
                     type="password"
                     required
-                    value={regPassword}
-                    onChange={(e) => setRegPassword(e.target.value)}
-                    placeholder="อย่างน้อย 4 ตัวอักษร"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-violet-200 focus:border-violet-500 transition-all"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-[#DCD6EE] focus:border-violet-600 text-sm focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all bg-white font-medium"
                   />
                 </div>
-              </div>
 
-              {roleStatus.hasAdmin && roleStatus.hasTreasurer ? (
-                <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm">
-                  ทั้ง 2 ตำแหน่ง (อาจารย์ที่ปรึกษา และ เหรัญญิก) มีผู้ลงทะเบียนครบแล้ว หากคุณคือผู้ดูแลกรุณาเลือกแท็บ <strong>"เข้าสู่ระบบ"</strong> ด้านบนครับ
-                </div>
-              ) : (
                 <button
                   type="submit"
-                  disabled={regLoading || isRoleFull(regRole)}
-                  className="w-full py-3.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white font-semibold text-sm transition-all shadow-md shadow-violet-200 disabled:opacity-50 flex items-center justify-center gap-2"
+                  disabled={loginLoading}
+                  className="w-full py-3.5 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm transition-all shadow-md shadow-violet-200 disabled:opacity-50 flex items-center justify-center gap-2 border-2 border-violet-500 active:scale-[0.99]"
                 >
-                  {regLoading ? "กำลังบันทึก..." : (
+                  {loginLoading ? "กำลังตรวจสอบ..." : (
                     <>
-                      <UserCheck className="w-4 h-4" />
-                      ลงทะเบียนตำแหน่งผู้ดูแล
+                      <Lock className="w-4 h-4" />
+                      เข้าสู่ระบบเพื่อจัดการเงินห้อง
                     </>
                   )}
                 </button>
-              )}
-            </form>
-          )}
+              </form>
+            )}
 
+            {/* TAB: REGISTER */}
+            {activeTab === "register" && (
+              <form onSubmit={handleRegister} className="space-y-4">
+                {regError && (
+                  <div className="p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-200 text-rose-600 text-xs sm:text-sm flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{regError}</span>
+                  </div>
+                )}
+
+                {regSuccess && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 text-emerald-700 text-xs sm:text-sm flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span>{regSuccess}</span>
+                  </div>
+                )}
+
+                {/* Role Picker with Boxes */}
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-2">
+                    เลือกตำแหน่งที่ต้องการสมัคร (1 ตำแหน่ง ต่อ 1 คน)
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label
+                      className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                        regRole === "ADMIN"
+                          ? "border-violet-600 bg-violet-50/70 ring-2 ring-violet-200"
+                          : "border-[#DCD6EE] hover:bg-gray-50"
+                      } ${roleStatus.hasAdmin ? "opacity-40 cursor-not-allowed" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value="ADMIN"
+                        disabled={roleStatus.hasAdmin}
+                        checked={regRole === "ADMIN"}
+                        onChange={() => setRegRole("ADMIN")}
+                        className="text-violet-600 w-4 h-4"
+                      />
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-gray-900">อาจารย์ที่ปรึกษา</p>
+                        <p className="text-[11px] text-gray-500">Admin ผู้คุมระบบ</p>
+                      </div>
+                    </label>
+
+                    <label
+                      className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                        regRole === "TREASURER"
+                          ? "border-violet-600 bg-violet-50/70 ring-2 ring-violet-200"
+                          : "border-[#DCD6EE] hover:bg-gray-50"
+                      } ${roleStatus.hasTreasurer ? "opacity-40 cursor-not-allowed" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="role"
+                        value="TREASURER"
+                        disabled={roleStatus.hasTreasurer}
+                        checked={regRole === "TREASURER"}
+                        onChange={() => setRegRole("TREASURER")}
+                        className="text-violet-600 w-4 h-4"
+                      />
+                      <div>
+                        <p className="text-xs sm:text-sm font-bold text-gray-900">เหรัญญิก</p>
+                        <p className="text-[11px] text-gray-500">ผู้บันทึก/จัดการเงินห้อง</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
+                    ชื่อ-นามสกุล จริง
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={regFullName}
+                    onChange={(e) => setRegFullName(e.target.value)}
+                    placeholder="เช่น อ.กฤษฎา หรือ ด.ช.วิชัย การเงินดี"
+                    className="w-full px-4 py-3 rounded-2xl border-2 border-[#DCD6EE] focus:border-violet-600 text-sm focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all bg-white font-medium"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
+                      ชื่อผู้ใช้ (Username)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={regUsername}
+                      onChange={(e) => setRegUsername(e.target.value)}
+                      placeholder="ภาษาอังกฤษหรือตัวเลข"
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#DCD6EE] focus:border-violet-600 text-sm focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all bg-white font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
+                      รหัสผ่าน (Password)
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      placeholder="อย่างน้อย 4 ตัวอักษร"
+                      className="w-full px-4 py-3 rounded-2xl border-2 border-[#DCD6EE] focus:border-violet-600 text-sm focus:outline-none focus:ring-4 focus:ring-violet-100 transition-all bg-white font-medium"
+                    />
+                  </div>
+                </div>
+
+                {roleStatus.hasAdmin && roleStatus.hasTreasurer ? (
+                  <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-xs sm:text-sm">
+                    ทั้ง 2 ตำแหน่ง (อาจารย์ที่ปรึกษา และ เหรัญญิก) มีผู้ลงทะเบียนครบแล้ว หากคุณคือผู้ดูแลกรุณาเลือกแท็บ <strong>"เข้าสู่ระบบ"</strong> ด้านบนครับ
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={regLoading || isRoleFull(regRole)}
+                    className="w-full py-3.5 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm transition-all shadow-md shadow-violet-200 disabled:opacity-50 flex items-center justify-center gap-2 border-2 border-violet-500 active:scale-[0.99]"
+                  >
+                    {regLoading ? "กำลังบันทึก..." : (
+                      <>
+                        <UserCheck className="w-4 h-4" />
+                        ลงทะเบียนตำแหน่งผู้ดูแล
+                      </>
+                    )}
+                  </button>
+                )}
+              </form>
+            )}
+          </div>
         </div>
 
       </div>

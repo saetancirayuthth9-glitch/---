@@ -12,8 +12,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // If on Landing / Auth Portal page, render clean full-width shell with 90% content container
   if (pathname === "/") {
     return (
-      <div className="min-h-screen bg-slate-50 text-gray-900 flex flex-col justify-center">
-        <main className="w-[90%] max-w-6xl mx-auto py-6">
+      <div className="min-h-screen bg-[#F4F3F8] text-gray-900 flex flex-col justify-center py-6 sm:py-10">
+        <main className="w-[90%] max-w-6xl mx-auto">
           {children}
         </main>
       </div>
@@ -21,10 +21,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFE] text-gray-900 flex">
-      {/* Desktop Sidebar (Fixed on left) */}
+    <div className="min-h-screen bg-[#F4F3F8] text-gray-900 flex">
+      {/* Desktop Sidebar (Fixed on left with crisp border) */}
       <div className="hidden md:block w-64 flex-shrink-0">
-        <div className="fixed top-0 left-0 w-64 h-screen">
+        <div className="fixed top-0 left-0 w-64 h-screen border-r-2 border-[#E5E0F2]">
           <Sidebar />
         </div>
       </div>
@@ -38,7 +38,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileMenuOpen(false)}
           />
           {/* Drawer content */}
-          <div className="fixed inset-y-0 left-0 w-72 max-w-[80vw] bg-white z-50 shadow-2xl animate-in slide-in-from-left duration-200">
+          <div className="fixed inset-y-0 left-0 w-72 max-w-[80vw] bg-white z-50 shadow-2xl animate-in slide-in-from-left duration-200 border-r-2 border-violet-200">
             <Sidebar onClose={() => setMobileMenuOpen(false)} />
           </div>
         </div>

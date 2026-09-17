@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Mali } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/components/layout/Sidebar";
+import Navbar from "@/components/layout/Navbar";
 
-const font = Mali({ 
-  weight: ['400', '500', '600', '700'],
-  subsets: ["latin", "thai"] 
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Class Fund App 🌸",
-  description: "Manage class income and expenses adorably",
+  title: "Classroom Budget Tracker",
+  description: "ระบบจัดการรายรับ-รายจ่ายเงินห้อง",
 };
 
 export default function RootLayout({
@@ -18,19 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={font.className}>
-        <div className="min-h-screen">
-          <header className="bg-white/80 backdrop-blur-sm border-b-2 border-pink-200 sticky top-0 z-10">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-pink-500 tracking-wide">
-                🌸 เงินกองกลางห้อง 🌸
-              </h1>
-            </div>
-          </header>
-          <main className="container mx-auto px-4 py-8">
-            {children}
-          </main>
+    <html lang="th">
+      <body className={`${inter.className} bg-gray-50`}>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <div className="flex-1 ml-64">
+            <Navbar />
+            <main className="w-[90%] mx-auto py-8">
+              {children}
+            </main>
+          </div>
         </div>
       </body>
     </html>

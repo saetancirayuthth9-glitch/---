@@ -154,19 +154,6 @@ export default function AuthPortalPage() {
             โปร่งใส ตรวจสอบง่าย นักเรียนทุกคนเข้าดูยอดเงินคงเหลือและประวัติได้ทันที
           </p>
 
-          {user && (
-            <div className="pt-2">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-violet-50 border-2 border-violet-200 text-xs sm:text-sm text-violet-800 shadow-sm">
-                <span>เข้าสู่ระบบอยู่แล้วในฐานะ: <strong>{user.full_name}</strong> ({user.role === 'ADMIN' ? 'อาจารย์ที่ปรึกษา' : user.role === 'TREASURER' ? 'เหรัญญิก' : 'นักเรียน'})</span>
-                <button
-                  onClick={() => router.push("/dashboard")}
-                  className="font-bold underline text-violet-600 hover:text-violet-900 ml-1"
-                >
-                  ไปที่แดชบอร์ด →
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 

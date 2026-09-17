@@ -9,11 +9,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // If on Landing / Auth Portal page, render clean full-width shell with 90% content container
+  // If on Landing / Auth Portal page, render clean full-width shell with full container
   if (pathname === "/") {
     return (
       <div className="min-h-screen bg-[#F4F3F8] text-gray-900 flex flex-col justify-center py-6 sm:py-10">
-        <main className="w-[90%] max-w-6xl mx-auto">
+        <main className="w-full max-w-[1400px] px-4 sm:px-8 mx-auto">
           {children}
         </main>
       </div>
@@ -47,7 +47,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar onOpenMobileMenu={() => setMobileMenuOpen(true)} />
-        <main className="w-[90%] max-w-7xl mx-auto py-6 sm:py-8 flex-1">
+        <main className="w-full px-4 sm:px-8 py-6 sm:py-8 flex-1">
           {children}
         </main>
       </div>
